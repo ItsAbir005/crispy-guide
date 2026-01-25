@@ -3,14 +3,12 @@
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-
     "strict": true,
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-
-    "outDir": "dist"
+    "skipLibCheck": true
   },
-  "include": ["index.ts"]
+  "include": ["services/**/*", "shared/**/*"],
+  "exclude": ["node_modules", "**/dist", "**/node_modules"]
 }
