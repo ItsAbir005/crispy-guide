@@ -1,5 +1,4 @@
 import amqp from 'amqplib';
-
 export const sendToQueue = async (queueName: string, message: any) => {
   const connection = await amqp.connect('amqp://localhost');
   const channel = await connection.createChannel();
