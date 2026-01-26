@@ -1,12 +1,23 @@
 import express from 'express';
+import type { OrderStatus } from "../../shared/types/order.js";
 import type { Request, Response } from "express";
 const app = express();
-const port = 3000;
-
-app.get('/', (req: Request, res: Response) => {
-  res.send('The Gateway is open! 🚀');
+app.use(express.json());
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - [${req.method}] ${req.url}`);
+  next();
 });
-
+const port = 3000;
+app.get('/health', (req: Request, res: Response) => {
+  res.json({ status: "Gateway is active" });
+});
+app.post('/orders', (req, res) => {
+  const status: OrderStatus = "PENDING";
+  if (!req.body.price) {
+    return res.status(400).json({ error: "Price is required!" });
+  }
+  res.json({ status, receivedPrice: req.body.price });
+});
 app.listen(port, () => {
-  console.log(`Gateway is running at http://localhost:${port}`);
+  console.log(` Gateway guarding on http://localhost:${port}`);
 });
