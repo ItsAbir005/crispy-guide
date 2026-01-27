@@ -1,6 +1,6 @@
 import express from 'express';
 import type { OrderStatus } from "../../shared/types/order.js";
-import { rateLimiter } from './middleware/rateLimiter.js';
+import { rateLimiter } from './src/middleware/rateLimiter.js';
 import type { Request, Response } from "express";
 const app = express();
 app.use(express.json());
