@@ -1,8 +1,10 @@
 import express from 'express';
 import type { OrderStatus } from "../../shared/types/order.js";
+import { rateLimiter } from './middleware/rateLimiter.js';
 import type { Request, Response } from "express";
 const app = express();
 app.use(express.json());
+app.use(rateLimiter);
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - [${req.method}] ${req.url}`);
   next();
