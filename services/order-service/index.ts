@@ -1,5 +1,6 @@
 import express from 'express';
 import { Pool } from 'pg';
+import { sendToQueue } from "../../shared/queue.js"
 const app = express();
 app.use(express.json());
 const pool = new Pool({
@@ -22,6 +23,13 @@ app.post('/orders', async (req, res) => {
     );
     console.log("Order saved to DB. Now we need to check inventory...");
     res.status(201).json(newOrder.rows[0]);
+    const orderPayload = {
+      orderId: newOrder.rows[0].id,
+      items: items,
+      userId: userId
+    };
+    await sendToQueue('inventory_queue', orderPayload);
+    console.log("Message sent to Inventory Worker");
   } catch (err) {
     res.status(500).json({ error: "Database error" });
   }
