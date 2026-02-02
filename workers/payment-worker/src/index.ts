@@ -1,4 +1,8 @@
 import amqp from 'amqplib';
+let channel: any;
+async function sendToQueue(queue: string, payload: any) {
+  channel.sendToQueue(queue, Buffer.from(JSON.stringify(payload)));
+}
 async function startPaymentWorker() {
   const connection = await amqp.connect('amqp://localhost');
   const channel = await connection.createChannel();
@@ -9,10 +13,13 @@ async function startPaymentWorker() {
   channel.consume(queue, async (msg) => {
     if (msg !== null) {
       const { orderId, amount } = JSON.parse(msg.content.toString());
-      console.log(`Processing payment for Order ${orderId} of $${amount}...`);
-      await new Promise(res => setTimeout(res, 2000));
       const isSuccess = Math.random() > 0.1;
-
+      const resultPayload = {
+        orderId: orderId,
+        status: isSuccess ? 'SUCCESS' : 'FAILED'
+      };
+      await sendToQueue('order_completion_queue', resultPayload)
+      await new Promise(res => setTimeout(res, 2000));
       if (isSuccess) {
         console.log(`Payment successful for Order ${orderId}`);
       } else {
